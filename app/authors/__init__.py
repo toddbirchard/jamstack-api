@@ -1,10 +1,9 @@
 """Author management."""
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
-
 from clients import sms
 from clients.log import LOGGER
 from database.schemas import PostUpdate
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/authors", tags=["authors"])
 

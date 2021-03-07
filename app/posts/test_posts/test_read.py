@@ -1,7 +1,10 @@
-from sqlalchemy.engine.result import ResultProxy
-
 from clients.log import LOGGER
-from database.read_sql import collect_sql_queries, fetch_sql_files, parse_sql_batch
+from database.read_sql import (
+    collect_sql_queries,
+    fetch_sql_files,
+    parse_sql_batch
+)
+from sqlalchemy.engine.result import ResultProxy
 
 
 def test_fetch_sql_files():

@@ -2,9 +2,8 @@
 from typing import Optional
 
 import requests
-from requests import HTTPError, Response
-
 from clients.log import LOGGER
+from requests import HTTPError, Response
 
 
 class Mailgun:
@@ -34,14 +33,14 @@ class Mailgun:
                 auth=("app", self.api_key),
                 data=body,
             )
-            if req.status_code == 200:
-                LOGGER.success(
-                    f"Successfully sent email to {body['to']} with subject `{body['subject']}`"
-                )
-            else:
+            if req.status_code != 200:
                 LOGGER.warning(
                     f"Mailgun returned status code {req.status_code}: {req.content}"
                 )
+                return req
+            LOGGER.success(
+                f"Successfully sent email to {body['to']} with subject `{body['subject']}`"
+            )
             return req
         except HTTPError as e:
             LOGGER.error(

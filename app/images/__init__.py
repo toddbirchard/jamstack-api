@@ -1,13 +1,12 @@
 """Generate optimized images to be served from Google Cloud CDN."""
 from typing import Optional
 
-from fastapi import APIRouter, Query
-
 from clients import gcs
 from clients.log import LOGGER
 from config import basedir, settings
 from database import rdbms
 from database.schemas import PostUpdate
+from fastapi import APIRouter, Query
 
 router = APIRouter(prefix="/images", tags=["images"])
 

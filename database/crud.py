@@ -1,12 +1,11 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy.engine.result import ResultProxy
-from sqlalchemy.orm import Session
-
 from clients.log import LOGGER
 from database.models import Account, Comment, CommentUpvote, Donation
 from database.schemas import NetlifyAccount, NewComment, NewDonation
+from sqlalchemy.engine.result import ResultProxy
+from sqlalchemy.orm import Session
 
 
 def get_donation(db: Session, donation_id: int) -> Optional[ResultProxy]:
@@ -46,9 +45,9 @@ def create_donation(db: Session, donation: NewDonation) -> Donation:
     return db_item
 
 
-def get_comment(db: Session, comment_id: int) -> Optional[ResultProxy]:
+def get_comment(db: Session, comment_id: str) -> Optional[ResultProxy]:
     """
-    Fetch BuyMeACoffee donation by ID.
+    Fetch comment ID.
 
     :param db: ORM database session.
     :type db: Session
@@ -163,7 +162,7 @@ def get_account(db: Session, account_email: str) -> Optional[ResultProxy]:
     return db.query(Account).filter(Account.email == account_email).first()
 
 
-def create_account(db: Session, account: NetlifyAccount) -> NetlifyAccount:
+def create_account(db: Session, account: NetlifyAccount) -> Optional[NetlifyAccount]:
     """
     Create new account record sourced from Netlify.
 
@@ -171,7 +170,7 @@ def create_account(db: Session, account: NetlifyAccount) -> NetlifyAccount:
     :type db: Session
     :param account: User comment schema object.
     :type account: NetlifyAccount
-    :returns: NetlifyAccount
+    :returns: Optional[NetlifyAccount]
     """
     new_account = Account(
         id=account.id,
@@ -185,5 +184,8 @@ def create_account(db: Session, account: NetlifyAccount) -> NetlifyAccount:
     )
     db.add(new_account)
     db.commit()
-    LOGGER.success(f"New account created `{account.user_metadata.full_name}`")
-    return account
+    account_confirmation = get_account(db, new_account.email)
+    if account_confirmation:
+        LOGGER.success(f"New account created `{account.email}`")
+        return account
+    LOGGER.error(f"Failed to create user account for `{account.email}`")

@@ -1,12 +1,11 @@
 """Database client."""
 from typing import List, Optional, Tuple
 
+from clients.log import LOGGER
 from pandas import DataFrame
 from sqlalchemy import MetaData, Table, create_engine, text
 from sqlalchemy.engine.result import ResultProxy
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-
-from clients.log import LOGGER
 
 
 class Database:

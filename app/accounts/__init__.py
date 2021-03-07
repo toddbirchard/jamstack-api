@@ -1,9 +1,4 @@
 """User account management & functionality."""
-from fastapi import APIRouter, Depends, HTTPException
-from mixpanel import MixpanelException
-from sqlalchemy.orm import Session
-
-from app.accounts.mixpanel import create_mixpanel_record
 from app.accounts.subscriptions import new_ghost_subscription
 from clients import ghost, mailgun
 from clients.log import LOGGER
@@ -12,68 +7,46 @@ from database.crud import (
     create_comment,
     create_donation,
     get_account,
+    get_comment,
     get_comment_upvote,
     get_donation,
     remove_comment_upvote,
-    submit_comment_upvote,
+    submit_comment_upvote
 )
 from database.models import Account, Comment
 from database.orm import get_db
 from database.schemas import (
-    GhostMemberEvent,
     NetlifyAccount,
     NetlifyUserEvent,
     NewComment,
     NewDonation,
-    UpvoteComment,
+    UpvoteComment
 )
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/account", tags=["accounts"])
 
 
 @router.post(
     "/",
-    summary="Add new user account to Ghost.",
-    description="Create free-tier Ghost membership for Netlify user account upon signup.",
-)
-async def new_ghost_member(user_event: GhostMemberEvent):
-    """
-    Create Ghost member.
-
-    :param user_event: Newly created user account.
-    :type user_event: GhostMemberEvent
-    """
-    try:
-        user = user_event.member.current
-        ghost_subscription = new_ghost_subscription(user)
-        mx = create_mixpanel_record(user)
-        return {"subscriptions": ghost_subscription, "mixpanel": mx}
-    except MixpanelException as e:
-        LOGGER.error(f"Error creating user in Mixpanel: {e}")
-        raise HTTPException(
-            status_code=400, detail=f"Error creating user in Mixpanel: {e}"
-        )
-
-
-@router.post(
-    "/new",
     summary="Create new account from Netlify",
     description="Create user account sourced from Netlify Identity.",
     response_model=NetlifyAccount,
 )
 async def new_account(
-    new_account_event: NetlifyUserEvent, db: Session = Depends(get_db)
+    new_account_request: NetlifyUserEvent, db: Session = Depends(get_db)
 ):
     """
     Create user account from Netlify identity signup.
 
-    :param new_account_event: Newly created user account from Netlify.
-    :type new_account_event: NetlifyUserEvent
+    :param new_account_request: Newly created user account from Netlify.
+    :type new_account_request: NetlifyUserEvent
     :param db: ORM Database session.
     :type db: Session
     :returns: NetlifyAccount
     """
-    account = new_account_event.user
+    account = new_account_request.user
     db_account = get_account(db, account.email)
     if db_account:
         LOGGER.warning(f"User account already exists for `{account.email}`.")
@@ -101,10 +74,16 @@ async def new_comment(comment: NewComment, db: Session = Depends(get_db)):
     """
     post = ghost.get_post(comment.post_id)
     authors = ghost.get_authors()
+    create_comment(db, comment)
+    comment_record = get_comment(db, comment.post_id)
+    if comment_record.rowcount == 0:
+        raise HTTPException(
+            500,
+            f"An unexpected error occurred; comment from {comment.user_email} was not created.",
+        )
+    ghost.rebuild_netlify_site()
     if comment.user_email not in authors:
         mailgun.email_notification_new_comment(post, comment.__dict__)
-    create_comment(db, comment)
-    ghost.rebuild_netlify_site()
     return comment
 
 

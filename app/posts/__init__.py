@@ -2,9 +2,6 @@
 from datetime import datetime, timedelta
 from time import sleep
 
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
-
 from app.moment import get_current_datetime, get_current_time
 from app.posts.lynx.parse import batch_lynx_embeds, generate_link_previews
 from app.posts.metadata import assign_img_alt, batch_assign_img_alt
@@ -15,6 +12,8 @@ from config import basedir
 from database import rdbms
 from database.read_sql import collect_sql_queries, fetch_raw_lynx_posts
 from database.schemas import PostBulkUpdate, PostUpdate
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 

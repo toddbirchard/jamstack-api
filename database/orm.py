@@ -1,8 +1,7 @@
+from config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
-from config import settings
 
 URI = settings.SQLALCHEMY_DATABASE_URI
 ARGS = settings.SQLALCHEMY_ENGINE_OPTIONS

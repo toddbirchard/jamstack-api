@@ -19,8 +19,8 @@ keywords = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-fastapi = "^0.62.0"
-pydantic = "^1.7.3"
+fastapi = "^0.63.0"
+pydantic = "^1.8.0"
 pandas = "*"
 sqlalchemy = "*"
 pymysql = "*"
@@ -41,18 +41,16 @@ extruct = "*"
 simplejson = "*"
 boto = "*"
 botocore = "*"
-pyarrow = "^2.0.0"
 uvicorn = "^0.13.0"
 ddtrace = "^0.44.0"
 ddtrace-asgi = "^0.3.0"
 PyGithub = "^1.54"
+black = "^20.8b1"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
 mock = "*"
 mypy = "*"
-black = "^20.8b1"
-isort = "^5.6.4"
 flake8 = "^3.8.4"
 
 [tool.poetry.scripts]

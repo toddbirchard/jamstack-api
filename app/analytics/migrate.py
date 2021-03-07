@@ -1,9 +1,8 @@
 """Import site analytics from data warehouse to application."""
-from pandas import DataFrame
-
 from clients import gbq
 from config import basedir
 from database import rdbms
+from pandas import DataFrame
 
 
 def import_site_analytics(timeframe: str) -> DataFrame:

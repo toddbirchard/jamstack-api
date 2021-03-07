@@ -1,10 +1,11 @@
 """Notify upon Github activity."""
-from fastapi import APIRouter, Request
-
 from app.moment import get_current_time
 from clients import sms
 from clients.log import LOGGER
 from config import settings
+from fastapi import APIRouter, Request
+from fastapi.responses import JSONResponse
+
 
 router = APIRouter(prefix="/github", tags=["github"])
 
@@ -27,7 +28,7 @@ async def github_pr(request: Request):
     pull_request = payload["pull_request"]
     repo = payload["repository"]
     if user in (settings.GH_USERNAME, "dependabot-preview[bot]", "renovate[bot]"):
-        return {
+        return JSONResponse({
             "pr": {
                 "id": pull_request["number"],
                 "time": get_current_time(),
@@ -40,14 +41,14 @@ async def github_pr(request: Request):
                     "action": action,
                 },
             }
-        }
+        })
     message = f'PR {action} for `{repo["name"]}`: \n \
      {pull_request["title"]}  \
      {pull_request["body"]} \
      {pull_request["url"]}'
     sms_message = sms.send_message(message)
     LOGGER.info(f"Github PR {action} for {repo['name']} generated SMS message")
-    return {
+    return JSONResponse({
         "pr": {
             "id": pull_request["number"],
             "time": get_current_time(),
@@ -66,7 +67,7 @@ async def github_pr(request: Request):
             "date_sent": sms_message.date_sent,
             "message": sms_message.body,
         },
-    }
+    })
 
 
 @router.post(
@@ -74,7 +75,7 @@ async def github_pr(request: Request):
     summary="Notify upon Github Issue creation.",
     description="Send SMS and Discord notifications upon Issue creation in HackersAndSlackers Github projects.",
 )
-async def github_issue(request: Request) -> dict:
+async def github_issue(request: Request) -> JSONResponse:
     """
     Send SMS and Discord notifications upon issue creation for HackersAndSlackers Github projects.
 
@@ -87,7 +88,7 @@ async def github_issue(request: Request) -> dict:
     issue = payload["issue"]
     repo = payload["repository"]
     if user in (settings.GH_USERNAME, "dependabot-preview[bot]", "renovate[bot]"):
-        return {
+        return JSONResponse({
             "issue": {
                 "id": issue["id"],
                 "time": get_current_time(),
@@ -100,11 +101,11 @@ async def github_issue(request: Request) -> dict:
                     "action": action,
                 },
             }
-        }
+        })
     message = f'Issue {action} for repository {repo["name"]}: `{issue["title"]}` \n\n {issue["url"]}'
     sms_message = sms.send_message(message)
     LOGGER.info(f"Github issue {action} for {repo['name']} generated SMS message")
-    return {
+    return JSONResponse({
         "issue": {
             "id": issue["id"],
             "time": get_current_time(),
@@ -123,4 +124,4 @@ async def github_issue(request: Request) -> dict:
             "date_sent": sms_message.date_sent,
             "message": sms_message.body,
         },
-    }
+    })

@@ -4,9 +4,8 @@ from typing import List, Optional, Tuple
 
 import jwt
 import requests
-from requests.exceptions import HTTPError
-
 from clients.log import LOGGER
+from requests.exceptions import HTTPError
 
 
 class Ghost:

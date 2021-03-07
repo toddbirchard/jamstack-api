@@ -1,9 +1,8 @@
 """Data models."""
+from database.orm import Base
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
-from database.orm import Base
 
 
 class Comment(Base):
@@ -37,7 +36,7 @@ class CommentUpvote(Base):
 
     # Relationships
     comment = relationship("Comment", backref="comment_id")
-    user = relationship("Account", backref="user_id")
+    user = relationship("Account")
 
 
 class Account(Base):

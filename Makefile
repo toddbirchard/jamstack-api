@@ -42,27 +42,23 @@ deploy:
 
 .PHONY: update
 update: env
-	.venv/bin/python3 -m pip install -U pip
+	export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=true
+	.venv/bin/python3 -m pip install --upgrade pip3 setuptools wheel
 	poetry update
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 
 .PHONY: format
 format: env
-	isort
-	black
+	$(shell isort -rc --multi-line=3)
+	$(shell black .)
 
 
 .PHONY: lint
 lint:
-	flake8 ./app --count \
+	flake8 . --count \
 			--select=E9,F63,F7,F82 \
-			--exclude .git,.github,__pycache__,.pytest_cache,.venv,logs,creds \
-			--show-source \
-			--statistics
-	flake8 ./clients --count \
-			--select=E9,F63,F7,F82 \
-			--exclude .git,.github,__pycache__,.pytest_cache,.venv,logs,creds \
+			--exclude .git,.github,__pycache__,.pytest_cache,.venv,logs,creds,.venv,docs,logs \
 			--show-source \
 			--statistics
 
@@ -75,6 +71,7 @@ clean:
 	find . -name 'Pipefile.lock' -delete
 	find . -name '*.log' -delete
 	find . -wholename 'logs/*.json' -delete
+	find . -wholename '.pytest_cache' -delete
 	find . -wholename '*/.pytest_cache' -delete
 	find . -wholename '*/logs/*.json' -delete
 	find . -wholename '.webassets-cache/*' -delete

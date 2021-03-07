@@ -349,6 +349,7 @@ class PostUpdate(BaseModel):
 class NetlifyUserMetadata(BaseModel):
     avatar_url: Optional[str] = Field(None, example="https://example.com/dsfdsf.jpg")
     full_name: str = Field(None, example="Fake Name")
+    signupSource: Optional[str] = Field(None, example="react-netlify-identity-widget")
 
 
 class NetlifyUserAppMetadata(BaseModel):
@@ -360,6 +361,7 @@ class NetlifyAccount(BaseModel):
     aud: Optional[str] = Field(None, example=None)
     role: Optional[str] = Field(None, example=None)
     email: str = Field(None, example="fake@example.com")
+    confirmation_sent_at: Optional[str] = Field(None, example="2021-03-04T07:06:54Z")
     app_metadata: NetlifyUserAppMetadata
     user_metadata: NetlifyUserMetadata
     created_at: datetime = Field(None, example="2019-11-07 14:38:35")
@@ -372,60 +374,50 @@ class NetlifyUserEvent(BaseModel):
     user: NetlifyAccount
 
 
-class NewGhostUser(BaseModel):
-    current: Optional[NetlifyAccount]
-
-
-class GhostMemberEvent(BaseModel):
-    member: NewGhostUser
-
-
 class Member(BaseModel):
-    id: str
-    uuid: str
-    email: str
-    name: Optional[str]
-    note: Optional[str] = None
-    subscribed: Optional[bool]
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
-    labels: Optional[List] = None
-    avatar_image: Optional[str] = None
-    comped: Optional[bool]
-
-
-class NewsletterSubscriber(BaseModel):
-    name: Optional[str] = Field(None, example=None)
-    email: str = Field(None, example="fake@example.com")
-
-
-class Subscriber(BaseModel):
-    current: Optional[Member] = None
-    previous: Optional[Member] = None
-
-
-class Subscription(BaseModel):
-    member: Subscriber
+    id: Optional[str] = Field(None, example="604393b784657849344434dfe31d")
+    uuid: Optional[str] = Field(None, example="e34567d5-5ac5-234e-4356-02f624cd3bbd")
+    email: Optional[str] = Field(None, example="fake@example.com")
+    name: Optional[str] = Field(None, example="Name")
+    note: Optional[str] = Field(None, example="")
+    subscribed: Optional[bool] = Field(None, example=True)
+    created_at: Optional[datetime] = Field(None, example="2021-03-06T14:37:42.846Z")
+    updated_at: Optional[datetime] = Field(None, example="2021-03-06T14:37:42.846Z")
+    labels: Optional[List[Optional[str]]] = Field([], example=[])
+    avatar_image: Optional[str] = Field(
+        None, example="https://gravatar.com/avatar/c611f62ef"
+    )
+    comped: Optional[bool] = Field(bool, example=False)
+    email_count: Optional[int] = Field(bool, example=0)
+    email_opened_count: Optional[int] = Field(bool, example=0)
 
     class Config:
         schema_extra = {
-            "member": {
-                "current": {
-                    "id": "5fc703013448cb765efe3f",
-                    "uuid": "20f43355a7-4896-461b-adc9-b71da1a188fa",
-                    "email": "fake@example.com",
-                    "name": "Fake Name",
-                    "note": "dw v fbnhntnhaf",
-                    "subscribed": True,
-                    "created_at": "2020-12-02T02:59:13.642Z",
-                    "updated_at": "2020-12-02T02:59:13.642Z",
-                    "labels": [],
-                    "avatar_image": "https://gravatar.com/avatar/a94833516733d846f03e678a8b4367e9?s=250&d=blank",
-                    "comped": True,
-                },
-                "previous": {},
-            }
+            "current": {
+                "id": "604393b65d4a222434dfe31d",
+                "uuid": "e90320d5-5ac5-490e-9814-02f624cd3bbd",
+                "email": "toddbirchard+fakeinfo@gmail.com",
+                "name": "Fake Name",
+                "subscribed": True,
+                "created_at": "2021-03-06T14:37:42.846Z",
+                "updated_at": "2021-03-06T14:37:42.846Z",
+                "labels": [],
+                "avatar_image": "https://gravatar.com/avatar/c611f62ef75d2fafe58ffb61661b22e0?s=250&d=blank",
+                "comped": False,
+                "email_count": 0,
+                "email_opened_count": 0
+            },
+            "previous": {}
         }
+
+
+class NewGhostMember(BaseModel):
+    current: Optional[Member]
+    previous: Optional[Member]
+
+
+class GhostMemberEvent(BaseModel):
+    member: NewGhostMember
 
 
 class SubscriptionWelcomeEmail(BaseModel):
@@ -444,10 +436,10 @@ class SubscriptionWelcomeEmail(BaseModel):
 
 
 class SMS:
-    phone_recipient: str
-    phone_sender: str
-    date_sent: str
-    message: str
+    phone_recipient: str = Field(None, example="+5556461738")
+    phone_sender: str = Field(None, example="+5553451738")
+    date_sent: str = Field(None, example="2021-03-06T14:37:42.846Z")
+    message: str = Field(None, example="u up?")
 
     class Config:
         schema_extra = {

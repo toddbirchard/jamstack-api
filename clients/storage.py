@@ -4,13 +4,12 @@ from io import BytesIO
 from random import randint
 from typing import Iterator, List, Optional, Tuple
 
+from clients.log import LOGGER
 from google.cloud import storage
 from google.cloud.exceptions import GoogleCloudError
 from google.cloud.storage.blob import Blob
 from google.cloud.storage.client import Bucket, Client
 from PIL import Image
-
-from clients.log import LOGGER
 
 
 class GCS:

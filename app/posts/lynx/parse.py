@@ -4,13 +4,12 @@ from typing import List, Tuple
 
 import requests
 import simplejson as json
-from requests.exceptions import HTTPError, SSLError
-from sqlalchemy.engine.result import ResultProxy
-
 from app.posts.lynx.mobiledoc import mobile_doc
 from app.posts.lynx.scrape import scrape_link
 from app.posts.update import update_mobiledoc
 from clients.log import LOGGER
+from requests.exceptions import HTTPError, SSLError
+from sqlalchemy.engine.result import ResultProxy
 
 
 @LOGGER.catch

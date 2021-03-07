@@ -48,8 +48,8 @@ class Settings(BaseSettings):
                 "description": "Author management.",
             },
             {
-                "name": "newsletter",
-                "description": "Ghost newsletter subscriptions.",
+                "name": "members",
+                "description": "Ghost members subscriptions.",
             },
             {
                 "name": "analytics",

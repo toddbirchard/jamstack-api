@@ -1,5 +1,4 @@
 import pytest
-
 from config import settings
 from database.sql_db import Database
 

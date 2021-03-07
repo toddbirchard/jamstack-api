@@ -1,11 +1,9 @@
 import pprint
 
-from fastapi.testclient import TestClient
-
 from app import api
 from clients.log import LOGGER
 from config import basedir, settings
-from database.schemas import NewsletterSubscriber
+from fastapi.testclient import TestClient
 
 client = TestClient(api)
 pp = pprint.PrettyPrinter(indent=4)
@@ -92,6 +90,5 @@ def test_import_site_analytics():
     assert type(response.json()) == dict
 
 
-def test_newsletter_subscriber():
-    subscriber = NewsletterSubscriber(name="Test name", email="test@example.com")
-    response = client.post("/newsletter", subscriber)
+def test_member_subscribe(ghost_member_event):
+    response = client.post("/members", ghost_member_event)

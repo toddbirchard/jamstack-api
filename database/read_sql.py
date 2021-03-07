@@ -3,10 +3,9 @@ from os import listdir
 from os.path import isfile, join
 from typing import List
 
-from sqlalchemy.engine.result import ResultProxy
-
 from config import basedir
 from database import rdbms
+from sqlalchemy.engine.result import ResultProxy
 
 
 def collect_sql_queries(subdirectory: str) -> dict:

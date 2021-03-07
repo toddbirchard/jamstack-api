@@ -4,10 +4,9 @@ from typing import List, Optional
 import extruct
 import requests
 from bs4 import BeautifulSoup
+from clients.log import LOGGER
 from requests.exceptions import HTTPError
 from w3lib.html import get_base_url
-
-from clients.log import LOGGER
 
 http_headers = {
     "Access-Control-Allow-Origin": "*",

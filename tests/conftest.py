@@ -1,6 +1,4 @@
 import pytest
-from github import Github
-
 from clients.ghost import Ghost
 from clients.google_bigquery import BigQuery
 from clients.mail import Mailgun
@@ -8,6 +6,9 @@ from clients.sms import Twilio
 from clients.storage import GCS
 from config import settings
 from database.sql_db import Database
+from database.schemas import Member, NewGhostMember, GhostMemberEvent
+from github import Github
+from config import basedir
 
 
 @pytest.fixture
@@ -46,6 +47,7 @@ def gcs():
         bucket_name=settings.GCP_BUCKET_NAME,
         bucket_url=settings.GCP_BUCKET_URL,
         bucket_lynx=settings.GCP_LYNX_DIRECTORY,
+        basedir=basedir
     )
 
 
@@ -66,8 +68,41 @@ def gh():
 
 @pytest.fixture
 def gbq():
-    gbq_class = BigQuery(settings.GCP_PROJECT, settings.GCP_CREDENTIALS)
+    gbq_class = BigQuery(basedir)
     return gbq_class.create_client()
+
+
+@pytest.fixture
+def ghost_member_event(new_ghost_member):
+    return GhostMemberEvent(
+        member=new_ghost_member
+    )
+
+
+@pytest.fixture
+def new_ghost_member(ghost_member):
+    return NewGhostMember(
+        current=ghost_member,
+        previous=None
+    )
+
+
+@pytest.fixture
+def ghost_member():
+    return Member(
+        id="604393b65d4a222434dfe31d",
+        uuid="e90320d5-5ac5-490e-9814-02f624cd3bbd",
+        email="toddbirchard+fakeinfo@example.com",
+        name="Fake Name",
+        subscribed=True,
+        created_at="2021-03-06T14:37:42.846Z",
+        updated_at="2021-03-06T14:37:42.846Z",
+        labels=[],
+        avatar_image="https://gravatar.com/avatar/c611f62ef75d2fafe58ffb61661b22e0?s=250&d=blank",
+        comped=False,
+        email_count=0,
+        email_opened_count=0
+    )
 
 
 @pytest.fixture

@@ -2,9 +2,8 @@
 from sys import stdout
 
 import simplejson as json
-from loguru import logger
-
 from config import basedir, settings
+from loguru import logger
 
 DD_APM_FORMAT = (
     "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] "

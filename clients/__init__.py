@@ -1,12 +1,11 @@
 """Initialize clients and third-party services."""
-from github import Github
-
 from clients.ghost import Ghost
 from clients.google_bigquery import BigQuery
 from clients.mail import Mailgun
 from clients.sms import Twilio
 from clients.storage import GCS
 from config import basedir, settings
+from github import Github
 
 # Google Cloud Storage
 gcs = GCS(
