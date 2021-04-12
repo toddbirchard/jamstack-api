@@ -43,7 +43,7 @@ boto = "*"
 botocore = "*"
 pyarrow = "^2.0.0"
 uvicorn = "^0.13.0"
-ddtrace = "^0.47.0"
+ddtrace = "^0.48.0"
 ddtrace-asgi = "^0.3.0"
 PyGithub = "^1.54"
 
